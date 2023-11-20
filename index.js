@@ -83,7 +83,7 @@ app.put('/change-goods/:id', (req, res) => {
 })
 
 app.get('/search-goods/:searchValue', (req, res) => {
-    let searchValue = parseInt(req.params.searchValue)
+    let searchValue = req.params.searchValue
     let filteredArray = goods.filter((item) => searchValue === item.product_name)
     res.json(filteredArray)
 })
