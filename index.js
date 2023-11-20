@@ -84,7 +84,7 @@ app.put('/change-goods/:id', (req, res) => {
 
 app.get('/search-goods/:searchValue', (req, res) => {
     let searchValue = req.params.searchValue
-    let filteredArray = goods.filter((item) => searchValue === item.product_name)
+    let filteredArray = goods.filter((item) => item.product_name.startsWith(searchValue))
     res.json(filteredArray)
 })
 
