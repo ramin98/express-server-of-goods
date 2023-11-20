@@ -82,6 +82,11 @@ app.put('/change-goods/:id', (req, res) => {
     res.send(`Element with id ${id} was changed`)
 })
 
+app.get('/search-goods/:searchValue', (req, res) => {
+    let searchValue = parseInt(req.params.searchValue)
+    let filteredArray = goods.filter((item) => searchValue === item.product_name)
+    res.json(filteredArray)
+})
 
 app.listen(HOST, () => {
     console.log(HOST + " OK")
