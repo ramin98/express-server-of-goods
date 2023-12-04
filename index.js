@@ -237,6 +237,10 @@ app.get("/my-bag", (req, res) => {
   res.json(myBag);
 });
 
+app.get("/orders", (req, res) => {
+  res.json(orders);
+});
+
 app.post("/add-mybag", (req, res) => {
   let obj = req.body;
   myBag.push(obj);
