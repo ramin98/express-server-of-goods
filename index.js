@@ -249,12 +249,6 @@ app.post("/add-orders", (req, res) => {
   res.send(`Orders of ${obj.ordererName} was added orders`);
 });
 
-app.post("/add-orders", (req, res) => {
-  let obj = req.body;
-  orders.push(obj);
-  res.send(`Orders of ${obj.ordererName} was added orders`);
-});
-
 app.delete("/delete-mybag/:id", (req, res) => {
   let id = parseInt(req.params.id);
   myBag = myBag.filter((item) => id !== item.id);
