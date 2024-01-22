@@ -251,6 +251,7 @@ app.post("/add-orders", (req, res) => {
   let obj = req.body;
   orders.push(obj);
   res.send(`Orders of ${obj.ordererName} was added orders`);
+  myBag = []
 });
 
 app.delete("/delete-mybag/:id", (req, res) => {
@@ -275,6 +276,8 @@ app.delete("/delete-admin/:id", (req, res) => {
 
 app.post("/add-admin", (req, res) => {
   let obj = req.body;
+  console.log(obj)
+  obj.id = goods.at(-1).id + 1
   goods.push(obj);
   res.send(`Element with ${obj.product_name} was added to goods`);
 });
@@ -296,8 +299,9 @@ app.get("/search-goods/:searchValue", (req, res) => {
 
 app.get("/search-admin/:searchValue", (req, res) => {
   let searchValue = req.params.searchValue;
+  console.log(searchValue)
   let filteredArray = goods.filter((item) =>
-    item.product_name.startsWith(searchValue)
+    item.product_name.includes(searchValue)
   );
   res.json(filteredArray);
 });
