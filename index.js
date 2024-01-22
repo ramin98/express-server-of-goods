@@ -266,12 +266,12 @@ app.delete("/delete-mybag/:id", (req, res) => {
 
 app.delete("/delete-admin/:id", (req, res) => {
   let id = parseInt(req.params.id);
-  goods = goods.filter((item) => id !== item.id);
   res.send(
     `Element ${
       goods.find((item) => id === item.id).product_name
     } was deleted from goods`
   );
+  goods = goods.filter((item) => id !== item.id);
 });
 
 app.post("/add-admin", (req, res) => {
@@ -279,7 +279,7 @@ app.post("/add-admin", (req, res) => {
   console.log(obj)
   obj.id = goods.at(-1).id + 1
   goods.push(obj);
-  res.send(`Element with ${obj.product_name} was added to goods`);
+  res.send(`Element with name ${obj.product_name} was added to goods`);
 });
 
 app.put("/change-admin/:id", (req, res) => {
