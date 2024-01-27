@@ -256,12 +256,12 @@ app.post("/add-orders", (req, res) => {
 
 app.delete("/delete-mybag/:id", (req, res) => {
   let id = parseInt(req.params.id);
-  myBag = myBag.filter((item) => id !== item.id);
   res.send(
     `Element with ${
       myBag.find((item) => id === item.id).product_name
     } was deleted from bag`
   );
+  myBag = myBag.filter((item) => id !== item.id);
 });
 
 app.delete("/delete-admin/:id", (req, res) => {
