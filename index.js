@@ -222,6 +222,13 @@ let goods = [
 
 let myBag = [];
 let orders = [];
+let selectedElement = {
+    product_name: "",
+    product_description: "",
+    product_price: "",
+    store_name: "",
+    store_address: "",
+  }
 
 let i = 1;
 goods = goods.map((item) => {
@@ -237,6 +244,10 @@ app.get("/my-bag", (req, res) => {
   res.json(myBag);
 });
 
+app.get("/selected-element", (req, res) => {
+  res.json(selectedElement);
+});
+
 app.get("/orders", (req, res) => {
   res.json(orders);
 });
@@ -247,8 +258,13 @@ app.post("/add-mybag", (req, res) => {
   res.send(`Element with ${obj.product_name} was added to bag`);
 });
 
-app.post("/
-         +", (req, res) => {
+app.post("/add-selected-element", (req, res) => {
+  let obj = req.body;
+  selectedElement = {...obj}
+  res.send(`Element with name ${obj.product_name} was open`);
+});
+
+app.post("/add-orders", (req, res) => {
   let obj = req.body;
   orders.push(obj);
   res.send(`Orders of ${obj.ordererName} was added orders`);
