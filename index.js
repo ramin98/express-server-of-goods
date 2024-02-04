@@ -247,7 +247,8 @@ app.post("/add-mybag", (req, res) => {
   res.send(`Element with ${obj.product_name} was added to bag`);
 });
 
-app.post("/add-orders", (req, res) => {
+app.post("/
+         +", (req, res) => {
   let obj = req.body;
   orders.push(obj);
   res.send(`Orders of ${obj.ordererName} was added orders`);
