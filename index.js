@@ -223,12 +223,12 @@ let goods = [
 let myBag = [];
 let orders = [];
 let selectedElement = {
-    product_name: "",
-    product_description: "",
-    product_price: "",
-    store_name: "",
-    store_address: "",
-  }
+  product_name: "",
+  product_description: "",
+  product_price: "",
+  store_name: "",
+  store_address: "",
+}
 
 let i = 1;
 goods = goods.map((item) => {
@@ -254,39 +254,56 @@ app.get("/orders", (req, res) => {
 
 app.post("/add-mybag", (req, res) => {
   let obj = req.body;
-  myBag.push(obj);
-  res.send(`Element with ${obj.product_name} was added to bag`);
+  if (myBag.some((item) => item.product_name === obj.product_name)) {
+    res.json({ text: 'THIS PERSON ALREDY IS IN ARRAY', case: false })
+    return
+  } else {
+    myBag.push(obj);
+    // console.log(myBag)
+    console.log(obj)
+    res.json({ text: `Element with ${obj.product_name} was added to bag`, case: true });
+  }
 });
 
 app.post("/add-selected-element", (req, res) => {
   let obj = req.body;
-  selectedElement = {...obj}
+  selectedElement = { ...obj }
   res.send(`Element with name ${obj.product_name} was open`);
 });
 
 app.post("/add-orders", (req, res) => {
   let obj = req.body;
+  console.log(obj)
   orders.push(obj);
-  res.send(`Orders of ${obj.ordererName} was added orders`);
+  res.json({ text: `Orders of ${obj.customerName} was added orders` });
   myBag = []
 });
 
 app.delete("/delete-mybag/:id", (req, res) => {
   let id = parseInt(req.params.id);
-  res.send(
-    `Element with ${
-      myBag.find((item) => id === item.id).product_name
-    } was deleted from bag`
-  );
+  res.json({
+    text:
+      `Element with ${myBag.find((item) => id === item.id).product_name
+      } was deleted from bag`
+  });
   myBag = myBag.filter((item) => id !== item.id);
+});
+
+app.delete("/clean-mybag", (req, res) => {
+  myBag = []
+  res.json({
+    text:
+      `BAG IS CLEAN`
+  });
 });
 
 app.delete("/delete-admin/:id", (req, res) => {
   let id = parseInt(req.params.id);
-  res.send(
-    `Element ${
-      goods.find((item) => id === item.id).product_name
-    } was deleted from goods`
+  res.json(
+    {
+      text: `Element ${goods.find((item) => id === item.id).product_name
+        } was deleted from goods`
+    }
   );
   goods = goods.filter((item) => id !== item.id);
 });
@@ -294,16 +311,22 @@ app.delete("/delete-admin/:id", (req, res) => {
 app.post("/add-admin", (req, res) => {
   let obj = req.body;
   console.log(obj)
-  obj.id = goods.at(-1).id + 1
-  goods.push(obj);
-  res.send(`Element with name ${obj.product_name} was added to goods`);
+  if (goods.some((item) => item.product_name === obj.product_name)) {
+    res.json({ text: 'THIS GOODS ALREDY IS IN ARRAY', case: false })
+    return
+  } else {
+    let id = goods.at(-1).id + 1
+    obj.id = id
+    goods.push(obj);
+    res.send({ text: `Element with name ${obj.product_name} was added to goods}`, id: id });
+  }
 });
 
 app.put("/change-admin/:id", (req, res) => {
   let id = parseInt(req.params.id);
   let index = goods.findIndex((item) => id === item.id);
-  goods[index] = req.body;
-  res.send(`Element ${req.body.product_name} was changed`);
+  goods[index] = { ...req.body, id: goods[index].id }
+  res.json({ text: `Element ${req.body.product_name} was changed` });
 });
 
 app.get("/search-goods/:searchValue", (req, res) => {
