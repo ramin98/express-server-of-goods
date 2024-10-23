@@ -220,6 +220,9 @@ let goods = [
   },
 ];
 
+let myBag = []
+let orders = []
+
 let i = 1;
 const assignIds = () => {
   goods = goods.map((item) => ({ ...item, id: i++ }));
