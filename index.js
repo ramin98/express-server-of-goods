@@ -387,10 +387,10 @@ app.get("/search-admin/:searchValue", async (req, res) => {
   }
 });
 
-app.get("/search-price/:minPrice/:maxPrice", async (req, res) => {
+app.get("/search-price", async (req, res) => {
   try {
-    let minPrice = parseInt(req.params.minPrice);
-    let maxPrice = parseInt(req.params.maxPrice);
+    let minPrice = parseInt(req.query.minPrice);
+    let maxPrice = parseInt(req.query.maxPrice);
     let filteredArray = goods.filter(
       (item) => item.product_price >= minPrice && item.product_price <= maxPrice
     );
