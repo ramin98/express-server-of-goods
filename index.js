@@ -220,130 +220,184 @@ let goods = [
   },
 ];
 
-let myBag = [];
-let orders = [];
-let selectedElement = {
-  product_name: "",
-  product_description: "",
-  product_price: "",
-  store_name: "",
-  store_address: "",
-}
-
 let i = 1;
-goods = goods.map((item) => {
-  let obj = { ...item, id: i++ };
-  return obj;
-});
+const assignIds = () => {
+  goods = goods.map((item) => ({ ...item, id: i++ }));
+};
+assignIds();
 
-app.get("/goods", (req, res) => {
-  res.json(goods);
-});
-
-app.get("/my-bag", (req, res) => {
-  res.json(myBag);
-});
-
-app.get("/selected-element", (req, res) => {
-  res.json(selectedElement);
-});
-
-app.get("/orders", (req, res) => {
-  res.json(orders);
-});
-
-app.post("/add-mybag", (req, res) => {
-  let obj = req.body;
-  if (myBag.some((item) => item.product_name === obj.product_name)) {
-    res.json({ text: 'THIS PERSON ALREDY IS IN ARRAY', case: false })
-    return
-  } else {
-    myBag.push(obj);
-    // console.log(myBag)
-    console.log(obj)
-    res.json({ text: `Element with ${obj.product_name} was added to bag`, case: true });
+app.get("/goods", async (req, res) => {
+  try {
+    res.json(goods);
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка получения товаров' });
   }
 });
 
-app.post("/add-selected-element", (req, res) => {
-  let obj = req.body;
-  selectedElement = { ...obj }
-  res.send(`Element with name ${obj.product_name} was open`);
+app.get("/my-bag", async (req, res) => {
+  try {
+    res.json(myBag);
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка получения корзины' });
+  }
 });
 
-app.post("/add-orders", (req, res) => {
-  let obj = req.body;
-  console.log(obj)
-  orders.push(obj);
-  res.json({ text: `Orders of ${obj.customerName} was added orders` });
-  myBag = []
+app.get("/selected-element", async (req, res) => {
+  try {
+    res.json(selectedElement);
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка получения выбранного элемента' });
+  }
 });
 
-app.delete("/delete-mybag/:id", (req, res) => {
-  let id = parseInt(req.params.id);
-  res.json({
-    text:
-      `Element with ${myBag.find((item) => id === item.id).product_name
-      } was deleted from bag`
-  });
-  myBag = myBag.filter((item) => id !== item.id);
+app.get("/orders", async (req, res) => {
+  try {
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка получения заказов' });
+  }
 });
 
-app.delete("/clean-mybag", (req, res) => {
-  myBag = []
-  res.json({
-    text:
-      `BAG IS CLEAN`
-  });
-});
-
-app.delete("/delete-admin/:id", (req, res) => {
-  let id = parseInt(req.params.id);
-  res.json(
-    {
-      text: `Element ${goods.find((item) => id === item.id).product_name
-        } was deleted from goods`
+app.post("/add-mybag", async (req, res) => {
+  try {
+    let obj = req.body;
+    if (myBag.some((item) => item.product_name === obj.product_name)) {
+      res.json({ text: 'Этот товар уже в корзине', case: false });
+    } else {
+      myBag.push(obj);
+      res.json({ text: `Товар ${obj.product_name} был добавлен в корзину`, case: true });
     }
-  );
-  goods = goods.filter((item) => id !== item.id);
-});
-
-app.post("/add-admin", (req, res) => {
-  let obj = req.body;
-  console.log(obj)
-  if (goods.some((item) => item.product_name === obj.product_name)) {
-    res.json({ text: 'THIS GOODS ALREDY IS IN ARRAY', case: false })
-    return
-  } else {
-    let id = goods.at(-1).id + 1
-    obj.id = id
-    goods.push(obj);
-    res.send({ text: `Element with name ${obj.product_name} was added to goods}`, id: id });
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка добавления товара в корзину' });
   }
 });
 
-app.put("/change-admin/:id", (req, res) => {
-  let id = parseInt(req.params.id);
-  let index = goods.findIndex((item) => id === item.id);
-  goods[index] = { ...req.body, id: goods[index].id }
-  res.json({ text: `Element ${req.body.product_name} was changed` });
+app.post("/add-selected-element", async (req, res) => {
+  try {
+    let obj = req.body;
+    selectedElement = { ...obj };
+    res.send(`Товар с названием ${obj.product_name} был выбран`);
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка выбора товара' });
+  }
 });
 
-app.get("/search-goods/:searchValue", (req, res) => {
-  let searchValue = req.params.searchValue;
-  let filteredArray = goods.filter((item) =>
-    item.product_name.startsWith(searchValue)
-  );
-  res.json(filteredArray);
+app.post("/add-orders", async (req, res) => {
+  try {
+    let obj = req.body;
+    orders.push(obj);
+    res.json({ text: `Заказ клиента ${obj.customerName} был добавлен` });
+    myBag = [];
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка добавления заказа' });
+  }
 });
 
-app.get("/search-admin/:searchValue", (req, res) => {
-  let searchValue = req.params.searchValue;
-  console.log(searchValue)
-  let filteredArray = goods.filter((item) =>
-    item.product_name.includes(searchValue)
-  );
-  res.json(filteredArray);
+app.delete("/delete-mybag/:id", async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let item = myBag.find((item) => id === item.id);
+    if (item) {
+      myBag = myBag.filter((item) => id !== item.id);
+      res.json({ text: `Товар ${item.product_name} был удален из корзины` });
+    } else {
+      res.status(404).json({ text: 'Товар не найден в корзине' });
+    }
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка удаления товара из корзины' });
+  }
+});
+
+app.delete("/clean-mybag", async (req, res) => {
+  try {
+    myBag = [];
+    res.json({ text: 'Корзина очищена' });
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка очистки корзины' });
+  }
+});
+
+app.delete("/delete-admin/:id", async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let item = goods.find((item) => id === item.id);
+    if (item) {
+      goods = goods.filter((item) => id !== item.id);
+      res.json({ text: `Товар ${item.product_name} был удален из товаров` });
+    } else {
+      res.status(404).json({ text: 'Товар не найден' });
+    }
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка удаления товара' });
+  }
+});
+
+app.post("/add-admin", async (req, res) => {
+  try {
+    let obj = req.body;
+    if (goods.some((item) => item.product_name === obj.product_name)) {
+      res.json({ text: 'Этот товар уже есть в массиве', case: false });
+    } else {
+      let id = goods.at(-1).id + 1;
+      obj.id = id;
+      goods.push(obj);
+      res.json({ text: `Товар с именем ${obj.product_name} был добавлен`, id });
+    }
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка добавления товара' });
+  }
+});
+
+app.put("/change-admin/:id", async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let index = goods.findIndex((item) => id === item.id);
+    if (index !== -1) {
+      goods[index] = { ...req.body, id: goods[index].id };
+      res.json({ text: `Товар ${req.body.product_name} был изменен` });
+    } else {
+      res.status(404).json({ text: 'Товар не найден' });
+    }
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка изменения товара' });
+  }
+});
+
+app.get("/search-goods/:searchValue", async (req, res) => {
+  try {
+    let searchValue = req.params.searchValue;
+    let filteredArray = goods.filter((item) =>
+      item.product_name.startsWith(searchValue)
+    );
+    res.json(filteredArray);
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка поиска товаров' });
+  }
+});
+
+app.get("/search-admin/:searchValue", async (req, res) => {
+  try {
+    let searchValue = req.params.searchValue;
+    let filteredArray = goods.filter((item) =>
+      item.product_name.includes(searchValue)
+    );
+    res.json(filteredArray);
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка поиска товаров' });
+  }
+});
+
+app.get("/search-price/:minPrice/:maxPrice", async (req, res) => {
+  try {
+    let minPrice = parseInt(req.params.minPrice);
+    let maxPrice = parseInt(req.params.maxPrice);
+    let filteredArray = goods.filter(
+      (item) => item.product_price >= minPrice && item.product_price <= maxPrice
+    );
+    res.json(filteredArray);
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка поиска товаров по цене' });
+  }
 });
 
 app.listen(HOST, () => {
