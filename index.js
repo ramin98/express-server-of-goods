@@ -6,6 +6,8 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
 
 let goods = [
   {
@@ -306,6 +308,16 @@ app.post("/add-mybag", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ text: 'Ошибка добавления товара в корзину' });
+  }
+});
+
+app.post("/form-test", async (req, res) => {
+  try {
+    let obj = req.body;
+    console.log(obj)
+    res.json(obj);
+  } catch (error) {
+    res.status(500).json({ text: 'Ошибка' });
   }
 });
 
