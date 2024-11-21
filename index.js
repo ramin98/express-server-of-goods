@@ -6,8 +6,7 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-
+app.use(bodyParser.urlencoded({ extended: false }));
 
 let goods = [
   {
@@ -252,24 +251,37 @@ let goods = [
   },
 ];
 
-function generateRandomId(length) {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-  }
 
-let myBag = []
-let orders = []
+// for (let index = 0; index < 10000; index++) {
+//   goods.push({
+//     product_name: "Kişi şalı",
+//     product_description: "Səliqəli, çoxrəngli",
+//     product_price: 25,
+//     store_name: "Əliyev Moda Mərkəzi",
+//     store_address: "Bakı şəhəri, Azadlıq prospekti 89",
+//     id: "OCaDfHpjVD3v",
+//   })
+  
+// }
+
+function generateRandomId(length) {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+let myBag = [];
+let orders = [];
 
 app.get("/goods", async (req, res) => {
   try {
     res.json(goods);
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка получения товаров' });
+    res.status(500).json({ text: "Ошибка получения товаров" });
   }
 });
 
@@ -277,7 +289,7 @@ app.get("/my-bag", async (req, res) => {
   try {
     res.json(myBag);
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка получения корзины' });
+    res.status(500).json({ text: "Ошибка получения корзины" });
   }
 });
 
@@ -285,7 +297,7 @@ app.get("/selected-element", async (req, res) => {
   try {
     res.json(selectedElement);
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка получения выбранного элемента' });
+    res.status(500).json({ text: "Ошибка получения выбранного элемента" });
   }
 });
 
@@ -293,7 +305,7 @@ app.get("/orders", async (req, res) => {
   try {
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка получения заказов' });
+    res.status(500).json({ text: "Ошибка получения заказов" });
   }
 });
 
@@ -301,23 +313,26 @@ app.post("/add-mybag", async (req, res) => {
   try {
     let obj = req.body;
     if (myBag.some((item) => item.product_name === obj.product_name)) {
-      res.json({ text: 'Этот товар уже в корзине', case: false });
+      res.json({ text: "Этот товар уже в корзине", case: false });
     } else {
       myBag.push(obj);
-      res.json({ text: `Товар ${obj.product_name} был добавлен в корзину`, case: true });
+      res.json({
+        text: `Товар ${obj.product_name} был добавлен в корзину`,
+        case: true,
+      });
     }
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка добавления товара в корзину' });
+    res.status(500).json({ text: "Ошибка добавления товара в корзину" });
   }
 });
 
 app.post("/form-test", async (req, res) => {
   try {
     let obj = req.body;
-    console.log(obj)
+    console.log(obj);
     res.json(obj);
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка' });
+    res.status(500).json({ text: "Ошибка" });
   }
 });
 
@@ -327,7 +342,7 @@ app.post("/add-selected-element", async (req, res) => {
     selectedElement = { ...obj };
     res.send(`Товар с названием ${obj.product_name} был выбран`);
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка выбора товара' });
+    res.status(500).json({ text: "Ошибка выбора товара" });
   }
 });
 
@@ -338,7 +353,7 @@ app.post("/add-orders", async (req, res) => {
     res.json({ text: `Заказ клиента ${obj.customerName} был добавлен` });
     myBag = [];
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка добавления заказа' });
+    res.status(500).json({ text: "Ошибка добавления заказа" });
   }
 });
 
@@ -350,34 +365,34 @@ app.delete("/delete-mybag/:id", async (req, res) => {
       myBag = myBag.filter((item) => id !== item.id);
       res.json({ text: `Товар ${item.product_name} был удален из корзины` });
     } else {
-      res.status(404).json({ text: 'Товар не найден в корзине' });
+      res.status(404).json({ text: "Товар не найден в корзине" });
     }
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка удаления товара из корзины' });
+    res.status(500).json({ text: "Ошибка удаления товара из корзины" });
   }
 });
 
 app.delete("/clean-mybag", async (req, res) => {
   try {
     myBag = [];
-    res.json({ text: 'Корзина очищена' });
+    res.json({ text: "Корзина очищена" });
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка очистки корзины' });
+    res.status(500).json({ text: "Ошибка очистки корзины" });
   }
 });
 
 app.delete("/delete-admin/:id", async (req, res) => {
   try {
-    let id = parseInt(req.params.id);
+    let id = req.params.id
     let item = goods.find((item) => id === item.id);
     if (item) {
       goods = goods.filter((item) => id !== item.id);
-      res.json({ text: `Товар ${item.product_name} был удален из товаров` });
+      res.json({ text: `Товар ${item.product_name} был удален из товаров`, case:true });
     } else {
-      res.status(404).json({ text: 'Товар не найден' });
+      res.status(404).json({ text: "Товар не найден", case:false });
     }
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка удаления товара' });
+    res.status(500).json({ text: "Ошибка удаления товара" });
   }
 });
 
@@ -385,30 +400,32 @@ app.post("/add-admin", async (req, res) => {
   try {
     let obj = req.body;
     if (goods.some((item) => item.product_name === obj.product_name)) {
-      res.json({ text: 'Этот товар уже есть в массиве', case: false });
+      res.json({ text: "Этот товар уже есть в массиве", case: false });
     } else {
-      let id = generateRandomId(12)
+      let id = generateRandomId(12);
       obj.id = id;
+      console.log(obj)
       goods.push(obj);
-      res.json({ text: `Товар с именем ${obj.product_name} был добавлен`, id });
+      res.json({case: true, text: `Товар с именем ${obj.product_name} был добавлен`, id });
     }
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка добавления товара' });
+    res.status(500).json({ text: "Ошибка добавления товара" });
   }
 });
 
 app.put("/change-admin/:id", async (req, res) => {
   try {
-    let id = parseInt(req.params.id);
+    let id = req.params.id
+    console.log(id)
     let index = goods.findIndex((item) => id === item.id);
     if (index !== -1) {
       goods[index] = { ...req.body, id: goods[index].id };
-      res.json({ text: `Товар ${req.body.product_name} был изменен` });
+      res.json({ text: `Товар ${req.body.product_name} был изменен` ,case:true });
     } else {
-      res.status(404).json({ text: 'Товар не найден' });
+      res.status(404).json({ text: "Товар не найден",case:false });
     }
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка изменения товара' });
+    res.status(500).json({ text: "Ошибка изменения товара" });
   }
 });
 
@@ -420,7 +437,7 @@ app.get("/search-goods/:searchValue", async (req, res) => {
     );
     res.json(filteredArray);
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка поиска товаров' });
+    res.status(500).json({ text: "Ошибка поиска товаров" });
   }
 });
 
@@ -432,7 +449,7 @@ app.get("/search-admin/:searchValue", async (req, res) => {
     );
     res.json(filteredArray);
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка поиска товаров' });
+    res.status(500).json({ text: "Ошибка поиска товаров" });
   }
 });
 
@@ -440,12 +457,13 @@ app.get("/search-price", async (req, res) => {
   try {
     let minPrice = parseInt(req.query.minPrice);
     let maxPrice = parseInt(req.query.maxPrice);
+    console.log(minPrice, maxPrice)
     let filteredArray = goods.filter(
       (item) => item.product_price >= minPrice && item.product_price <= maxPrice
     );
     res.json(filteredArray);
   } catch (error) {
-    res.status(500).json({ text: 'Ошибка поиска товаров по цене' });
+    res.status(500).json({ text: "Ошибка поиска товаров по цене" });
   }
 });
 
