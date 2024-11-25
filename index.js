@@ -359,13 +359,13 @@ app.post("/add-orders", async (req, res) => {
 
 app.delete("/delete-mybag/:id", async (req, res) => {
   try {
-    let id = parseInt(req.params.id);
+    let id = req.params.id
     let item = myBag.find((item) => id === item.id);
     if (item) {
       myBag = myBag.filter((item) => id !== item.id);
-      res.json({ text: `Товар ${item.product_name} был удален из корзины` });
+      res.json({ text: `Товар ${item.product_name} был удален из корзины`, case:true });
     } else {
-      res.status(404).json({ text: "Товар не найден в корзине" });
+      res.status(404).json({ text: "Товар не найден в корзине", case: false });
     }
   } catch (error) {
     res.status(500).json({ text: "Ошибка удаления товара из корзины" });
