@@ -396,6 +396,48 @@ app.delete("/delete-admin/:id", async (req, res) => {
   }
 });
 
+app.delete("/delete-admin-bulk", async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    // Валидация входных данных
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ 
+        case: false,
+        text: "Передайте массив id для удаления в поле 'ids' (минимум 1 id)" 
+      });
+    }
+
+    // Множество для O(1) проверок
+    const idsSet = new Set(ids);
+
+    // Найдём какие из переданных id реально существуют в goods
+    const existingIdsSet = new Set(goods.filter(g => idsSet.has(g.id)).map(g => g.id));
+    const notFoundIds = ids.filter(id => !existingIdsSet.has(id));
+
+    // Удаляем из goods все, чьи id попали в idsSet
+    const beforeCount = goods.length;
+    goods = goods.filter(item => !idsSet.has(item.id));
+    const removedCount = beforeCount - goods.length;
+
+    // Во избежание рассинхрона — чистим такие же позиции из корзины
+    const beforeBag = myBag.length;
+    myBag = myBag.filter(item => !idsSet.has(item.id));
+    const removedFromBag = beforeBag - myBag.length;
+
+    return res.json({
+      case: true,
+      text: `Удалено товаров: ${removedCount}. Из корзины удалено: ${removedFromBag}.`,
+      removedIds: Array.from(existingIdsSet),
+      notFoundIds
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ case: false, text: "Ошибка пакетного удаления товаров" });
+  }
+});
+
+
 app.post("/add-admin", async (req, res) => {
   try {
     let obj = req.body;
@@ -470,3 +512,4 @@ app.get("/search-price", async (req, res) => {
 app.listen(HOST, () => {
   console.log(HOST + " OK");
 });
+
